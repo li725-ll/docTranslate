@@ -57,7 +57,7 @@ class MainFrame(wx.Frame):  # 主窗口
         self.mark = False
         self.task_bar_icon = TaskBarIcon(self)  # 创建系统托盘
         self.CreateStatusBar(number=1, style=wx.STB_DEFAULT_STYLE, id=0, name="status_bar")  # 创建状态栏
-        self.StatusBar.SetStatusText(text="作者：LMX; 博客：https://blog.csdn.net/hskjshs?spm=1011.2124.3001.5343", i=0)  # 设置状态栏
+        self.StatusBar.SetStatusText(text="作者：LMX; ", i=0)  # 设置状态栏
         self.SetIcon(wx.Icon('images/tubiao.ico', wx.BITMAP_TYPE_ICO))  # 设置图标
         menu_bar = wx.MenuBar(style=wx.SIMPLE_BORDER)  # 创建菜单栏
         self.SetMenuBar(menu_bar)  # 设置菜单栏
