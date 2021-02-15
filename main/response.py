@@ -7,7 +7,7 @@ def fanyi(shuru):
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36',
         'Content-Type': 'application/x-www-form-urlencoded'
     }
-    appid, salt, key = "20210114000671079", "1435660288", "1LjfiCj05NdriV6H7C1T"
+    appid, salt, key = "百度翻译appid", "随机码", "百度翻译密钥"  # 去百度翻译官网申请注册免费的
     q = shuru
     sign = appid+q+salt+key
     md5 = hashlib.md5()
