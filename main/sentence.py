@@ -23,7 +23,7 @@ def load_vocabulary(shuru):
     header = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36'
     }
-    response1 = requests.get(url="http://dict-co.iciba.com/api/dictionary.php?w="+ shuru +"&type=json&key=0CD3A4C079D2D23C683BBFF96300E924", headers=header)
+    response1 = requests.get(url="http://dict-co.iciba.com/api/dictionary.php?w="+ shuru +"&type=json&key=金山词霸密钥", headers=header)
     dirs = os.listdir("music/vocabulary")
     if len(dirs) >= 50:
         for i in dirs:
