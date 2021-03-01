@@ -3,7 +3,7 @@ from wx import adv
 import pyperclip
 import pyautogui
 import sentence
-import function
+import function,time
 
 
 class TaskBarIcon(wx.adv.TaskBarIcon):  # 系统托盘
@@ -54,23 +54,25 @@ class FanYiWindow(wx.TipWindow):
 
 class MainFrame(wx.Frame):  # 主窗口
     def __init__(self, image):
-        super(MainFrame, self).__init__(parent=None, title='百度翻译', id=wx.ID_ANY, size=(400, 300),
+        super(MainFrame, self).__init__(parent=None, title='文档翻译工具', id=wx.ID_ANY, size=(400, 300),
                                         style=wx.DEFAULT_FRAME_STYLE, )
         self.setting_exit_id = wx.NewIdRef()  # 创建id
         self.setting_copy_id = wx.NewIdRef()
         self.setting_play_id = wx.NewIdRef()
         self.about_id = wx.NewIdRef()
         self.help_id = wx.NewIdRef()
-        self.hot_key = wx.NewIdRef()
+        self.hot_key_tanslate = wx.NewIdRef()
+        self.hot_key_play = wx.NewIdRef()
         
         self.mark = False
         self.task_bar_icon = TaskBarIcon(self)  # 创建系统托盘
         self.CreateStatusBar(number=1, style=wx.STB_DEFAULT_STYLE, id=0, name="status_bar")  # 创建状态栏
-        self.StatusBar.SetStatusText(text="作者：LMX; 博客：https://blog.csdn.net/hskjshs?spm=1011.2124.3001.5343", i=0)  # 设置状态栏
+        self.StatusBar.SetStatusText(text="作者：LMX;" , i=0)  # 设置状态栏
         self.SetIcon(wx.Icon('images/ico/tubiao.ico', wx.BITMAP_TYPE_ICO))  # 设置图标
         menu_bar = wx.MenuBar(style=wx.SIMPLE_BORDER)  # 创建菜单栏
         self.SetMenuBar(menu_bar)  # 设置菜单栏
-        self.RegisterHotKey(self.hot_key, wx.MOD_ALT, 0)
+        self.RegisterHotKey(self.hot_key_tanslate, wx.MOD_ALT, 0)
+        self.RegisterHotKey(self.hot_key_play, wx.MOD_SHIFT, 0)
         temp = image.ConvertToBitmap()
         self.bmp = wx.StaticBitmap(parent=self, bitmap=temp)
      
@@ -95,7 +97,8 @@ class MainFrame(wx.Frame):  # 主窗口
         # 绑定事件
         self.Bind(wx.EVT_CLOSE, self.Close)
         self.Bind(wx.EVT_ICONIZE, self.OnIconfiy)
-        self.Bind(wx.EVT_HOTKEY, self.hotkey_down, id=self.hot_key)
+        self.Bind(wx.EVT_HOTKEY, self.hotkey_down_translate, id=self.hot_key_tanslate)
+        self.Bind(wx.EVT_HOTKEY, self.hotkey_down_play, id=self.hot_key_play)
         # 绑定菜单事件
         self.Bind(wx.EVT_MENU, self.play, self.setting_play_id)
         self.Bind(wx.EVT_MENU, self.copy,self.setting_copy_id)
@@ -118,7 +121,6 @@ class MainFrame(wx.Frame):  # 主窗口
         self.Destroy()
         
     def copy(self, event):
-        #pyperclip.paste()
         answer = wx.MessageBox('是否将翻译结果复制到剪贴板', '复制', wx.CANCEL)
         if answer == 4:
             self.mark = True
@@ -126,7 +128,7 @@ class MainFrame(wx.Frame):  # 主窗口
             self.mark = False
             
     def about(self, event):
-        wx.MessageBox('基于百度翻译API的翻译程序', '关于')
+        wx.MessageBox('基于翻译API的翻译程序', '关于')
         
     def help(self, event):
         message = """使用说明：
@@ -135,17 +137,30 @@ class MainFrame(wx.Frame):  # 主窗口
         """
         wx.MessageBox(message, '帮助', style=wx.OK)
 
-    def hotkey_down(self, event):
+    def hotkey_down_translate(self, event):
         pyautogui.hotkey('ctrl','c')
         shuchu = response.fanyi(pyperclip.paste())
         if self.mark:
             pyperclip.copy(shuchu)
         FanYiWindow(self, shuchu[1:])
+        
+    def hotkey_down_play(self, event):
+        pyautogui.hotkey('ctrl','c')
+        vab = pyperclip.paste()
+        if vab =="":
+            FanYiWindow(self, "手动ctrl+c后重试")
+        else:
+            vab.strip()
+            vab = vab.lower()
+            flag = sentence.load_vocabulary(vab)
+            FanYiWindow(self, flag)
+            if flag != "出错了哦":
+                function.vab_play(pyperclip.paste())
 
 
 class app(wx.App):
     def OnInit(self):
-        image = wx.Image("images/index/index.jpg", wx.BITMAP_TYPE_JPEG)
+        image = wx.Image("images/index/"+time.strftime("%Y-%m-%d", time.localtime())+".jpg", wx.BITMAP_TYPE_JPEG)
         self.main_window = MainFrame(image)
         self.main_window.SetMaxSize((540,800))  # 固定窗口大小
         self.main_window.SetMinSize((540,800))
@@ -156,7 +171,7 @@ class app(wx.App):
 
 
 def run():
-    sentence.load_sentence()  # 加载资源
+    sentence.load_sentence()
     function.load_image()
     function.load_music()
     appA = app()
